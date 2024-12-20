@@ -451,3 +451,24 @@ func Locations(data []byte, k uint) []uint64 {
 
 	return locs
 }
+
+// GetIndex returns the indices in the Bloom filter for the given data.
+func (f *BloomFilter) GetIndex(data []byte) []uint {
+	h := baseHashes(data)
+	locs := make([]uint, f.k)
+	for i := uint(0); i < f.k; i++ {
+		locs[i] = f.location(h, i)
+	}
+	return locs
+}
+
+// Search returns the indices in the Bloom filter.
+func (f *BloomFilter) Search() []int {
+	locs := make([]int, 0)
+	for i := 0; i < int(f.m); i++ {
+		if f.b.Test(uint(i)) {
+			locs = append(locs, i)
+		}
+	}
+	return locs
+}
